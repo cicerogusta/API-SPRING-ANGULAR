@@ -33,13 +33,13 @@ public class ClienteController {
         return ResponseEntity.status(HttpStatus.OK).body(productsList);
     }
 
-    @GetMapping("/clientes/{id}")
+    @GetMapping("/clientes/{codigo}")
     public ResponseEntity<Object> getOneClient(@PathVariable(value="codigo") Long codigo){
         Optional<Cliente> cliente = clientRepository.findById(codigo);
         return cliente.<ResponseEntity<Object>>map(value -> ResponseEntity.status(HttpStatus.OK).body(value)).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Client not found."));
     }
 
-    @PutMapping("/products/{id}")
+    @PutMapping("/cliente/{codigo}")
     public ResponseEntity<Object> updateCliente(@PathVariable(value = "codigo") Long codigo, @RequestBody @Valid ClienteRecordDTO clienteRecordDTO) {
         Optional<Cliente> product = clientRepository.findById(codigo);
         if (product.isEmpty()) {
@@ -49,14 +49,9 @@ public class ClienteController {
         BeanUtils.copyProperties(clienteRecordDTO, cliente);
         return ResponseEntity.status(HttpStatus.OK).body(clientRepository.save(cliente));
     }
+    @DeleteMapping("/cliente/{codigo}")
+    public void removerCliente(@PathVariable long codigo) {
+        clientRepository.deleteById(codigo);
 
-    @DeleteMapping("/products/{id}")
-    public ResponseEntity<Object> deleteCliente(@PathVariable(value = "codigo") Long codigo) {
-        Optional<Cliente> product = clientRepository.findById(codigo);
-        if (product.isEmpty()) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found.");
-        }
-        clientRepository.delete(product.get());
-        return ResponseEntity.status(HttpStatus.OK).body("Product deleted successfully.");
     }
 }
